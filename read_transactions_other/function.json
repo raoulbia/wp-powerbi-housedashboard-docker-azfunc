@@ -1,15 +1,12 @@
 {
   "bindings": [
     {
-      "authLevel": "anonymous",
+      "authLevel": "function",
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
       "route": "read_transactions_other/homedashdata",
-      "methods": [
-        "get",
-        "post"
-      ]
+      "methods": ["get"]
     },
     {
       "type": "http",

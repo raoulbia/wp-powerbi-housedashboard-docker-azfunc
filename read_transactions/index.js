@@ -1,44 +1,40 @@
-const axios = require('axios');
+// Import necessary modules
 const ExcelJS = require('exceljs');
-const moment = require('moment');
-const { DefaultAzureCredential } = require('@azure/identity');
 const { BlobServiceClient } = require('@azure/storage-blob');
 
+// Define the Azure Function
 module.exports = async function (context, req) {
   try {
-    // Define the ADLS details
+    // Define the Azure Data Lake Storage (ADLS) details
     const connectionString = process.env["AzureWebJobsStorage"];
     const containerName = 'housedashboardcontainer';
     const directoryName = 'data';
     const fileName = 'explore_account_transaction_master.xlsx';
 
-    // Read the Excel file from ADLS
+    // Azure Storage operations
     const blobServiceClient = BlobServiceClient.fromConnectionString(connectionString);
     const containerClient = blobServiceClient.getContainerClient(containerName);
     const blobClient = containerClient.getBlobClient(`${directoryName}/${fileName}`);
     const downloadResponse = await blobClient.download();
 
-    // Load the workbook using ExcelJS
+    // Data processing operations
     const workbook = new ExcelJS.Workbook();
     await workbook.xlsx.read(downloadResponse.readableStreamBody);
-
-    // Assuming the data starts from the second row (index 1) of the Excel file
     const dataStartRow = 2;
 
-    // Assuming the expected column names in the Power BI table
-    const expectedColumns = ['Column1', 'Column2', 'Column3'];
-
+    
     // Get the first worksheet from the workbook
     const worksheet = workbook.worksheets[0];
 
-    // Get the data from the worksheet
+    // Extract data from the worksheet and convert each cell to a string
     const data = worksheet.getSheetValues().map(row => row.map(cell => cell ? cell.toString().trim() : null));
 
-    // Assuming the column headers are in the first row of the Excel file
+    // Get the column headers from the first row of the Excel file
     const headerRow = data[dataStartRow - 1];
     const actualColumns = headerRow.map(column => column.trim());
 
     // Validate the column structure
+    // const expectedColumns = ['Column1', 'Column2', 'Column3'];
     // if (actualColumns.length !== expectedColumns.length || !expectedColumns.every(column => actualColumns.includes(column))) {
     //   // Column structure mismatch
     //   throw new Error('Column structure mismatch between the file and the Power BI table');
@@ -64,6 +60,7 @@ module.exports = async function (context, req) {
       body: JSON.stringify(jsonData, null, 2)
     };
   } catch (error) {
+    // Log the error and set the response to the error message
     context.log(`Error: ${error.message}`);
     context.res = {
       status: 500,

@@ -1,32 +1,36 @@
+# Azure Function Deployment with Docker
 
-#### Step 1: Pre-requisites
+This project provides a guide and necessary scripts for deploying an Azure Function using a Docker container. The Azure Function is designed to work with various Azure resources including a resource group, a storage account, a container registry, Application Insights, and an App Service Plan. 
 
-In Azure portal create the following resources
-* a resource group
-* a storage account with Hierarchical namespace enabled 
-  * in the storage account create a container with a directory as per your `index.json` (or vice versa)
-  * don't create the storage account as part of setting up the Function App. It will not give you the option to "Add Directory"
-* a Container registry
-* Application Insights
-* App Service Plan with pricing plan `Basic B1`
-* Function App 
-  * for deployment select `Container Image`
-  * select `App service plan` created above
-  * Note: this will create a function app with a quick start default docker image. We will need to point this to our docker image in later steps (see below).
+The project includes steps to initialize the function app with Docker, configure the function app, build and push the Docker image, and deploy the image to the function app. The guide also provides optional steps for manual deployment settings and updating PowerBI if necessary.
 
-#### Step 2
+This project is ideal for developers who want to leverage the power of Azure Functions and Docker for their applications. It provides a streamlined process for setting up and deploying an Azure Function, making it easier to manage and scale your applications.
 
-```
- mkdir wp-docker-azfunc && cd wp-docker-azfunc
- func init . --docker
- func new
+## Step 1: Pre-requisites
+
+Create the following resources in the Azure portal:
+
+- A resource group
+- A storage account with Hierarchical namespace enabled. In the storage account, create a container with a directory as per your `index.json` (or vice versa). Do not create the storage account as part of setting up the Function App, as it will not give you the option to "Add Directory".
+- A Container registry
+- Application Insights
+- App Service Plan with pricing plan `Basic B1`
+- Function App. For deployment, select `Container Image` and the `App service plan` created above. Note: this will create a function app with a quick start default docker image. We will need to point this to our docker image in later steps.
+
+## Step 2: Initialize Function App
+
+Navigate to your desired directory and initialize the function app with Docker.
+
+```bash
+mkdir wp-docker-azfunc && cd wp-docker-azfunc
+func init . --docker
+func new
 ```
 
 #### Step 3
 
-* in `function.json` replace `"authLevel": "req",` by `"authLevel": "anonymous",`
-* update `index.json` and `packages.json` as needed
-* IMPORTANT: in both `packages.json` ensure to have
+* in `function.json` replace `"authLevel": "req",` by `"authLevel": "function",`
+* IMPORTANT: in both `function.json` files ensure to have
   * "scriptFile": "index.js"
   * specific route for each e.g. `"route": "read_transactions/homedashdata",` and `"route": "read_transactions_other/homedashdata",` resp.
 
