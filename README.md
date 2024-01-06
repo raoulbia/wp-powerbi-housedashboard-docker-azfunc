@@ -70,11 +70,29 @@ Go to function app in Azure portal, then under "Deployment" > " Deployment Cente
 
 #### Finally, in PowerBI
 
-Assuming you have the Dashboard already setup with existing Web Data sources defined but you need to update them.
+1. In PowerBI, go to Home > Get Data > Web.
+2. In the URL box, enter your Azure Function URL: https://<your-function-app>.azurewebsites.net/api/<your-function-name>
+3. Click on the "Advanced" button.
+4. In the "HTTP request header parameters" section, add a new parameter:
+   Name: `x-functions-key`
+   Value: `<your-function-key>`
+5. Click OK to load the data.
 
-* Go to Transform Data > Data Source Settings and update using these URL's
+This way, you're passing the function key in the header of the HTTP request, which is more secure than appending it to the URL.
+
+You can get the function key from the Azure portal. Here are the steps:
+
+1. Navigate to the Azure portal (https://portal.azure.com/).
+2. Go to your Function App.
+3. Expand the Functions menu on the left side and click on your function.
+4. Click on the "Manage" tab.
+5. Under Function Keys, you'll see the default key.
+
+Configure two PowerBI Web Data sources with the following URL's:
+
   * https://housedashboardapp.azurewebsites.net/api/read_transactions/homedashdata
   * https://housedashboardapp.azurewebsites.net/api/read_transactions_other/homedashdata
+
 
 
 
